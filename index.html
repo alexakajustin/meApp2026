@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMXXVI — Goals Journal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Generative Art Canvas Background -->
+    <canvas id="artCanvas"></canvas>
+    
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Hide UI Toggle Button -->
+    <button class="toggle-ui-btn" id="toggleUIBtn" title="Toggle UI (Press Escape)">
+        <svg class="icon-eye" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <svg class="icon-eye-off" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+        </svg>
+    </button>
+
+    <!-- Sound Toggle -->
+    <button class="sound-toggle-btn" id="soundToggleBtn" title="Toggle Sound">
+        <svg class="icon-sound-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <svg class="icon-sound-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+    </button>
+
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-content">
+                    <h1 class="title">MMXXVI</h1>
+                    <p class="subtitle">Personal Growth Journal</p>
+                </div>
+                <!-- Level & XP -->
+                <div class="level-container">
+                    <div class="level-badge">
+                        <span class="level-number" id="levelNumber">1</span>
+                        <span class="level-label">LVL</span>
+                    </div>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar" id="xpBar" style="width: 0%"></div>
+                        <span class="xp-text" id="xpText">0 / 100 XP</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <!-- Mantra -->
+                <div class="mantra-container" id="mantraContainer">
+                    <p class="mantra-text" id="mantraText">Click to set your mantra...</p>
+                    <button class="mantra-edit-btn" id="mantraEditBtn" title="Edit mantra">✏️</button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalLogs">0</span>
+                        <span class="stat-label">Logs</span>
+                    </div>
+                    <div class="stat streak-stat">
+                        <span class="streak-fire" id="streakFire">🔥</span>
+                        <span class="stat-value" id="currentStreak">0</span>
+                        <span class="stat-label">Day Streak</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quote Banner -->
+        <div class="quote-banner" id="quoteBanner">
+            <p class="quote-text" id="quoteText">"The happiness of your life depends upon the quality of your thoughts."</p>
+            <span class="quote-author" id="quoteAuthor">— Marcus Aurelius</span>
+        </div>
+
+        <!-- Achievements Popup -->
+        <div class="achievement-popup" id="achievementPopup">
+            <div class="achievement-icon">🏆</div>
+            <div class="achievement-content">
+                <span class="achievement-label">Achievement Unlocked!</span>
+                <span class="achievement-name" id="achievementName">First Step</span>
+            </div>
+        </div>
+
+        <!-- Encouragement Toast -->
+        <div class="encouragement-toast" id="encouragementToast">
+            <span id="encouragementText">Great work! Keep it up!</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Goals Sidebar -->
+            <aside class="goals-panel">
+                <h2 class="panel-title">Goals</h2>
+                <ul class="goals-list" id="goalsList">
+                    <!-- Goals will be injected here -->
+                </ul>
+                
+                <!-- Achievements Section -->
+                <div class="achievements-section">
+                    <h2 class="panel-title">Achievements</h2>
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- Achievements will be injected -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Custom Tooltip (positioned via JS) -->
+            <div class="custom-tooltip" id="customTooltip"></div>
+
+            <!-- Log Area -->
+            <section class="log-section">
+                <div class="log-header">
+                    <div class="goal-header-info">
+                        <h2 class="current-goal" id="currentGoalTitle">Select a goal</h2>
+                        <span class="log-count" id="goalLogCount"></span>
+                    </div>
+                    <!-- Goal Progress -->
+                    <div class="goal-progress-container" id="goalProgressContainer">
+                        <div class="goal-progress-bar">
+                            <div class="goal-progress-fill" id="goalProgressFill" style="width: 0%"></div>
+                        </div>
+                        <span class="goal-progress-text" id="goalProgressText">0 / 30 this month</span>
+                    </div>
+                </div>
+
+                <!-- New Log Input -->
+                <div class="new-log-container">
+                    <!-- Mood Selector -->
+                    <div class="mood-selector">
+                        <span class="mood-label">How are you feeling?</span>
+                        <div class="mood-options" id="moodOptions">
+                            <button class="mood-btn" data-mood="amazing" title="Amazing">🤩</button>
+                            <button class="mood-btn" data-mood="good" title="Good">😊</button>
+                            <button class="mood-btn" data-mood="okay" title="Okay">😐</button>
+                            <button class="mood-btn" data-mood="meh" title="Meh">😕</button>
+                            <button class="mood-btn" data-mood="tough" title="Tough">😤</button>
+                        </div>
+                    </div>
+                    
+                    <textarea 
+                        id="logInput" 
+                        class="log-input" 
+                        placeholder="What did you do today? Write your progress..."
+                        rows="3"
+                    ></textarea>
+                    
+                    <div class="log-actions">
+                        <!-- Photo Upload -->
+                        <label class="photo-upload-btn" title="Add photo">
+                            <input type="file" id="photoInput" accept="image/*" style="display:none">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            <span>Photo</span>
+                        </label>
+                        <div class="photo-preview" id="photoPreview" style="display:none">
+                            <img id="photoPreviewImg" src="" alt="Preview">
+                            <button class="photo-remove-btn" id="photoRemoveBtn">×</button>
+                        </div>
+                        
+                        <button class="log-btn" id="addLogBtn">
+                            <span>Add Log</span>
+                            <span class="xp-gain">+10 XP</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Goal Accountability Calendar -->
+                <div class="goal-calendar-section">
+                    <h3 class="calendar-title">📅 This Month's Accountability</h3>
+                    <div class="goal-calendar" id="goalCalendar">
+                        <!-- Calendar will be generated -->
+                    </div>
+                    <div class="calendar-legend">
+                        <span class="legend-item"><span class="legend-check">✓</span> Logged</span>
+                        <span class="legend-item"><span class="legend-x">✗</span> Missed</span>
+                        <span class="legend-item"><span class="legend-future">○</span> Upcoming</span>
+                    </div>
+                </div>
+
+                <!-- Heat Map Calendar -->
+                <div class="heatmap-section">
+                    <h3 class="heatmap-title">Activity This Year</h3>
+                    <div class="heatmap-container" id="heatmapContainer">
+                        <!-- Heatmap will be generated -->
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>Less</span>
+                        <div class="heatmap-legend-colors">
+                            <div class="heatmap-cell level-0"></div>
+                            <div class="heatmap-cell level-1"></div>
+                            <div class="heatmap-cell level-2"></div>
+                            <div class="heatmap-cell level-3"></div>
+                            <div class="heatmap-cell level-4"></div>
+                        </div>
+                        <span>More</span>
+                    </div>
+                </div>
+
+                <!-- Weekly Review -->
+                <div class="weekly-review" id="weeklyReview">
+                    <h3 class="review-title">📊 This Week</h3>
+                    <div class="review-stats">
+                        <div class="review-stat">
+                            <span class="review-stat-value" id="weekLogs">0</span>
+                            <span class="review-stat-label">Logs</span>
+                        </div>
+                        <div class="review-stat">
+                            <span class="review-stat-value" id="weekGoals">0</span>
+                            <span class="review-stat-label">Goals Worked</span>
+                        </div>
+                        <div class="review-stat">
+                            <span class="review-stat-value" id="weekXP">0</span>
+                            <span class="review-stat-label">XP Earned</span>
+                        </div>
+                    </div>
+                    <p class="review-summary" id="reviewSummary">Start logging to see your weekly summary!</p>
+                </div>
+
+                <!-- Logs Timeline -->
+                <div class="logs-timeline" id="logsTimeline">
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">📝</div>
+                        <p>No logs yet. Start writing your journey!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Mantra Modal -->
+    <div class="modal-overlay" id="mantraModal">
+        <div class="modal-content">
+            <h3>Set Your Personal Mantra</h3>
+            <p class="modal-description">This affirmation will greet you every time you open your journal.</p>
+            <textarea id="mantraInput" placeholder="e.g., I am becoming the best version of myself..." rows="3"></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" id="mantraCancelBtn">Cancel</button>
+                <button class="modal-btn primary" id="mantraSaveBtn">Save Mantra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Log Modal -->
+    <div class="modal-overlay" id="editLogModal">
+        <div class="modal-content">
+            <h3>Edit Today's Log</h3>
+            <p class="modal-description">You can only edit logs on the same day they were created.</p>
+            <textarea id="editLogInput" placeholder="Update your log..." rows="4"></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" id="editLogCancelBtn">Cancel</button>
+                <button class="modal-btn primary" id="editLogSaveBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="art.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
